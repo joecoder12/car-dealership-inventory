@@ -1,6 +1,7 @@
-import { Navigate, Outlet, useLocation } from 'react-router';
+import { Navigate, Outlet, useLocation, useSearchParams } from 'react-router';
 import { PageSpinner } from '../components/ui/Spinner';
 import { useAuth } from '../hooks/useAuth';
+import { safeRedirectPath } from '../lib/redirect';
 import { AccessDeniedPage } from '../pages/StatusPages';
 
 /**
@@ -20,10 +21,15 @@ export function RequireAdmin() {
   return <Outlet />;
 }
 
-/** Sign-in and registration pages make no sense once signed in. */
+/**
+ * Sign-in and registration pages make no sense once signed in. The guard sends
+ * the user to the same ?redirect= target the form would, because right after a
+ * successful sign-in both of them react to the new session and either may win.
+ */
 export function GuestOnly() {
   const { user, status } = useAuth();
+  const [searchParams] = useSearchParams();
   if (status === 'loading') return <PageSpinner label="Checking your session" />;
-  if (user) return <Navigate to="/" replace />;
+  if (user) return <Navigate to={safeRedirectPath(searchParams.get('redirect'))} replace />;
   return <Outlet />;
 }
