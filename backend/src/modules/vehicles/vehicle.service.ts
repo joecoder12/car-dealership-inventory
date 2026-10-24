@@ -1,4 +1,5 @@
 import type { Database } from '../../db/client.js';
+import { isRecordNotFound } from '../../db/errors.js';
 import { notFound } from '../../errors/app-error.js';
 import type { Prisma } from '../../generated/prisma/client.js';
 import { toVehicleDto, type VehicleDto } from './vehicle.dto.js';
@@ -6,6 +7,7 @@ import type {
   CreateVehicleInput,
   ListVehiclesQuery,
   SortOption,
+  UpdateVehicleInput,
   VehicleSearchCriteria,
 } from './vehicle.schemas.js';
 
@@ -20,6 +22,8 @@ export interface VehicleService {
   create(input: CreateVehicleInput): Promise<VehicleDto>;
   getById(id: string): Promise<VehicleDto>;
   search(criteria: VehicleSearchCriteria | ListVehiclesQuery): Promise<Page<VehicleDto>>;
+  update(id: string, details: UpdateVehicleInput): Promise<VehicleDto>;
+  remove(id: string): Promise<void>;
 }
 
 // Every ordering ends with the primary key so pages are stable when values tie.
@@ -107,6 +111,25 @@ export function createVehicleService(db: Database): VehicleService {
         data: vehicles.map(toVehicleDto),
         meta: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
       };
+    },
+
+    async update(id, details) {
+      try {
+        const vehicle = await db.vehicle.update({
+          where: { id },
+          data: { ...details, price: details.price.toFixed(2) },
+        });
+        return toVehicleDto(vehicle);
+      } catch (error) {
+        if (isRecordNotFound(error)) throw vehicleNotFound();
+        throw error;
+      }
+    },
+
+    async remove(id) {
+      // Purchase records survive: their vehicle_id is set to NULL by the FK.
+      const { count } = await db.vehicle.deleteMany({ where: { id } });
+      if (count === 0) throw vehicleNotFound();
     },
   };
 }

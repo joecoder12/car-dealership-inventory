@@ -61,6 +61,23 @@ export const createVehicleSchema = z.object({
 
 export type CreateVehicleInput = z.output<typeof createVehicleSchema>;
 
+/**
+ * PUT replaces every descriptive detail (omitted optional fields become null)
+ * but never the stock level. Stock only moves through purchase (atomic
+ * decrement) and restock (atomic increment); letting an edit form write an
+ * absolute quantity would silently undo purchases made while it was open.
+ */
+export const updateVehicleSchema = z
+  .object({
+    ...vehicleDetailsShape,
+    quantity: z
+      .never('Quantity cannot be edited here; use the restock or purchase endpoints')
+      .optional(),
+  })
+  .transform(({ quantity: _quantity, ...details }) => details);
+
+export type UpdateVehicleInput = z.output<typeof updateVehicleSchema>;
+
 export const SORT_OPTIONS = ['newest', 'price_asc', 'price_desc', 'make_asc', 'year_desc'] as const;
 export type SortOption = (typeof SORT_OPTIONS)[number];
 export const MAX_PAGE_SIZE = 50;

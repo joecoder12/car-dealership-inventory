@@ -6,6 +6,7 @@ import {
   idParamsSchema,
   listVehiclesQuerySchema,
   searchVehiclesQuerySchema,
+  updateVehicleSchema,
 } from './vehicle.schemas.js';
 import type { VehicleService } from './vehicle.service.js';
 
@@ -42,6 +43,18 @@ export function createVehicleRouter({
   router.post('/', requireAuth, requireAdmin, async (req, res) => {
     const input = parseInput(createVehicleSchema, req.body);
     res.status(201).json({ data: await vehicleService.create(input) });
+  });
+
+  router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
+    const { id } = parseInput(idParamsSchema, req.params);
+    const details = parseInput(updateVehicleSchema, req.body);
+    res.json({ data: await vehicleService.update(id, details) });
+  });
+
+  router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
+    const { id } = parseInput(idParamsSchema, req.params);
+    await vehicleService.remove(id);
+    res.status(204).end();
   });
 
   return router;
