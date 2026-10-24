@@ -7,7 +7,13 @@ import { buildTestApp, createSilentLogger } from '../helpers/app.js';
  * What clients see when PostgreSQL fails mid-request: a generic 500 with no
  * driver message, SQL or stack trace, while the real cause is logged.
  */
-const connectionLost = () => Promise.reject(new Error('Connection terminated unexpectedly'));
+// Like a real PrismaPromise, the failure is lazy: it only rejects when awaited.
+// (An eager Promise.reject would leave unobserved rejections behind when the
+// queries are passed to $transaction([...]) and the transaction itself fails.)
+const connectionLost = () => ({
+  then: (_resolve: unknown, reject: (reason: Error) => void) =>
+    reject(new Error('Connection terminated unexpectedly')),
+});
 
 function appWithBrokenDatabase() {
   const brokenDb = {
