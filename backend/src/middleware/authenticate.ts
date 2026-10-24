@@ -1,8 +1,9 @@
 import type { Request, RequestHandler } from 'express';
-import { forbidden, unauthenticated } from '../errors/app-error.js';
+import { timingSafeEqual } from 'node:crypto';
+import { AppError, forbidden, unauthenticated } from '../errors/app-error.js';
 import type { Role } from '../generated/prisma/enums.js';
 import type { PublicUser } from '../modules/auth/auth.service.js';
-import { ACCESS_COOKIE } from '../modules/auth/session-cookies.js';
+import { ACCESS_COOKIE, CSRF_HEADER } from '../modules/auth/session-cookies.js';
 import type { TokenService } from '../modules/auth/token-service.js';
 
 export interface AuthContext {
@@ -20,6 +21,16 @@ declare global {
     interface Request {
       auth?: AuthContext;
     }
+  }
+}
+
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+function assertCsrfHeaderMatches(header: string | undefined, expected: string): void {
+  const provided = Buffer.from(header ?? '');
+  const wanted = Buffer.from(expected);
+  if (provided.length !== wanted.length || !timingSafeEqual(provided, wanted)) {
+    throw new AppError(403, 'CSRF_TOKEN_INVALID', 'Missing or invalid CSRF token');
   }
 }
 
@@ -55,6 +66,12 @@ export function createAuthMiddleware(
   const requireAuth: RequestHandler = async (req, _res, next) => {
     const { token, via } = extractToken(req);
     const claims = tokens.verify(token);
+
+    // Browsers attach cookies to cross-site requests automatically, so a
+    // cookie-authenticated state change must also prove it came from our SPA.
+    if (via === 'cookie' && !SAFE_METHODS.has(req.method)) {
+      assertCsrfHeaderMatches(req.get(CSRF_HEADER), claims.csrfToken);
+    }
 
     const user = await findUser(claims.userId);
     if (!user) throw unauthenticated('Account no longer exists');
