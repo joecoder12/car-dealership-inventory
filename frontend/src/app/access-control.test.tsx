@@ -10,7 +10,8 @@ describe('navigation and access control', () => {
     renderRoute('/');
 
     const nav = await screen.findByRole('navigation', { name: /main/i });
-    expect(within(nav).getByRole('link', { name: /sign in/i })).toBeVisible();
+    // The session check runs first; the links appear once it reports "anonymous".
+    expect(await within(nav).findByRole('link', { name: /sign in/i })).toBeVisible();
     expect(within(nav).getByRole('link', { name: /create account/i })).toBeVisible();
     expect(within(nav).queryByRole('link', { name: /manage inventory/i })).not.toBeInTheDocument();
   });

@@ -1,9 +1,9 @@
-import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router';
 import { AppProviders } from '../app/AppProviders';
 import { AppRoutes } from '../app/AppRoutes';
+import { createQueryClient } from '../app/query-client';
 
 function LocationProbe() {
   const location = useLocation();
@@ -21,9 +21,7 @@ function LocationProbe() {
  * components together, the way a user would experience them.
  */
 export function renderRoute(path = '/') {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-  });
+  const queryClient = createQueryClient({ queries: { retry: false } });
   const user = userEvent.setup();
 
   render(
