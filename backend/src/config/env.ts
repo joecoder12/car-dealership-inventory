@@ -34,6 +34,8 @@ const envSchema = z.object({
     )
     .pipe(z.array(z.url({ protocol: /^https?$/, error: 'must be absolute http(s) origins' }))),
   AUTH_RATE_LIMIT_MAX: z.coerce.number().int().min(1).default(20),
+  // Reverse proxies in front of the API (0 = clients connect directly).
+  TRUST_PROXY: z.coerce.number().int().min(0).max(10).default(0),
 });
 
 export interface AppConfig {
@@ -44,6 +46,8 @@ export interface AppConfig {
   jwt: { secret: string; expiresInMinutes: number };
   corsOrigins: string[];
   authRateLimitMax: number;
+  /** How many proxy hops to trust when reading the client IP from X-Forwarded-For. */
+  trustProxyHops: number;
 }
 
 /**
@@ -74,5 +78,6 @@ export function loadConfig(env: Record<string, string | undefined> = process.env
     jwt: { secret: parsed.JWT_SECRET, expiresInMinutes: parsed.JWT_EXPIRES_IN_MINUTES },
     corsOrigins: parsed.CORS_ORIGINS,
     authRateLimitMax: parsed.AUTH_RATE_LIMIT_MAX,
+    trustProxyHops: parsed.TRUST_PROXY,
   };
 }

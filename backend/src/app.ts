@@ -31,6 +31,10 @@ export function createApp({ db, config, logger = consoleLogger }: AppDependencie
   const app = express();
 
   app.disable('x-powered-by');
+  // Without this, behind a proxy every client shares the proxy's IP and the
+  // auth rate limiter would throttle all users as one. Never trust more hops
+  // than actually exist, or clients could spoof X-Forwarded-For.
+  app.set('trust proxy', config.trustProxyHops);
   app.use(helmet());
   app.use(cors({ origin: config.corsOrigins, credentials: true }));
   app.use(express.json({ limit: '10kb' }));
