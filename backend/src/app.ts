@@ -11,6 +11,8 @@ import { createAuthRouter } from './modules/auth/auth.routes.js';
 import { createAuthService } from './modules/auth/auth.service.js';
 import { createTokenService } from './modules/auth/token-service.js';
 import { createHealthRouter } from './modules/health/health.routes.js';
+import { createInventoryRouter } from './modules/inventory/inventory.routes.js';
+import { createInventoryService } from './modules/inventory/inventory.service.js';
 import { createVehicleRouter } from './modules/vehicles/vehicle.routes.js';
 import { createVehicleService } from './modules/vehicles/vehicle.service.js';
 
@@ -38,10 +40,12 @@ export function createApp({ db, config, logger = consoleLogger }: AppDependencie
   const authService = createAuthService(db, tokens);
   const { requireAuth, requireRole } = createAuthMiddleware(tokens, authService.findUser);
   const vehicleService = createVehicleService(db);
+  const inventoryService = createInventoryService(db);
 
   app.use('/api/health', createHealthRouter(db, logger));
   app.use('/api/auth', createAuthRouter({ authService, requireAuth, config }));
   app.use('/api/vehicles', createVehicleRouter({ vehicleService, requireAuth, requireRole }));
+  app.use('/api', createInventoryRouter({ inventoryService, requireAuth, requireRole }));
 
   app.use(notFoundHandler);
   app.use(createErrorHandler(logger));
