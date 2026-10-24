@@ -90,6 +90,16 @@ describe('LoginPage', () => {
     expect(location()).toBe('/login');
   });
 
+  it('sends an already signed-in visitor to the requested page, not the showroom', async () => {
+    // Regression: after a successful sign-in the GuestOnly guard re-renders with
+    // the new session and used to race LoginPage's own redirect, sending users
+    // to "/" instead of e.g. /admin in a real browser.
+    signInAs(makeUser({ role: 'ADMIN' }));
+    const { location } = renderRoute('/login?redirect=%2Fadmin');
+
+    await waitFor(() => expect(location()).toBe('/admin'));
+  });
+
   it('sends visitors who are already signed in to the showroom', async () => {
     signInAs(makeUser());
     const { location } = renderRoute('/login');
