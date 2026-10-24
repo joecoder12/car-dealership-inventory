@@ -108,7 +108,10 @@ describe('apiRequest', () => {
 
   it('handles non-JSON error responses such as a proxy 502 page', async () => {
     server.use(
-      http.get('*/api/vehicles', () => new HttpResponse('<html>Bad gateway</html>', { status: 502 })),
+      http.get(
+        '*/api/vehicles',
+        () => new HttpResponse('<html>Bad gateway</html>', { status: 502 }),
+      ),
     );
 
     await expect(apiRequest('/vehicles')).rejects.toMatchObject({
