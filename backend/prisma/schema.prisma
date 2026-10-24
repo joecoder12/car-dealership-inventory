@@ -1,0 +1,97 @@
+// Database schema for the car dealership inventory system.
+// CHECK constraints (non-negative stock, positive prices, ...) cannot be expressed
+// in Prisma's schema language, so they live in hand-written SQL migrations.
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+/// A closed set so the database, API and UI agree on valid categories.
+enum VehicleCategory {
+  SEDAN
+  SUV
+  TRUCK
+  COUPE
+  CONVERTIBLE
+  HATCHBACK
+  WAGON
+  VAN
+}
+
+enum FuelType {
+  PETROL
+  DIESEL
+  HYBRID
+  ELECTRIC
+}
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  name         String     @db.VarChar(100)
+  /// Always stored lower-cased; see users_email_lowercase constraint.
+  email        String     @unique @db.VarChar(254)
+  passwordHash String     @map("password_hash")
+  role         Role       @default(USER)
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
+  purchases    Purchase[]
+
+  @@map("users")
+}
+
+model Vehicle {
+  id          String          @id @default(uuid()) @db.Uuid
+  make        String          @db.VarChar(60)
+  model       String          @db.VarChar(80)
+  category    VehicleCategory
+  price       Decimal         @db.Decimal(10, 2)
+  quantity    Int
+  year        Int?
+  fuelType    FuelType?       @map("fuel_type")
+  description String?         @db.VarChar(2000)
+  imageUrl    String?         @map("image_url") @db.VarChar(2048)
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+  purchases   Purchase[]
+
+  @@index([category])
+  @@index([price])
+  @@index([make, model])
+  @@index([createdAt])
+  @@map("vehicles")
+}
+
+/// Audit record of a completed purchase. Make, model and price are copied so the
+/// record stays meaningful after the vehicle is edited or deleted.
+model Purchase {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  vehicleId      String?  @map("vehicle_id") @db.Uuid
+  vehicleMake    String   @map("vehicle_make") @db.VarChar(60)
+  vehicleModel   String   @map("vehicle_model") @db.VarChar(80)
+  quantity       Int
+  unitPrice      Decimal  @map("unit_price") @db.Decimal(10, 2)
+  totalPrice     Decimal  @map("total_price") @db.Decimal(12, 2)
+  /// Client-supplied key that makes retried purchase requests safe.
+  idempotencyKey String?  @map("idempotency_key") @db.VarChar(100)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user    User     @relation(fields: [userId], references: [id])
+  vehicle Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, idempotencyKey])
+  @@index([vehicleId])
+  @@map("purchases")
+}
