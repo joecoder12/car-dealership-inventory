@@ -71,7 +71,9 @@ test.describe.serial('8–10. an admin manages a vehicle end to end', () => {
     await expect(page.getByRole('status')).toContainText(`Voltline ${model} was added.`);
 
     const row = await findRow(page);
-    vehicleId = (await row.getByRole('link', { name: `Voltline ${model}`, exact: true }).getAttribute('href'))!
+    vehicleId = (await row
+      .getByRole('link', { name: `Voltline ${model}`, exact: true })
+      .getAttribute('href'))!
       .split('/')
       .pop()!;
     expect(await vehicleRow(vehicleId)).toMatchObject({ quantity: 2, price: '38450.00' });
