@@ -37,7 +37,9 @@ export interface Session {
 export async function login(app: Express, email: string, password = DEFAULT_PASSWORD) {
   const response = await request(app).post('/api/auth/login').send({ email, password });
   if (response.status !== 200) {
-    throw new Error(`Login failed in test setup: ${response.status} ${JSON.stringify(response.body)}`);
+    throw new Error(
+      `Login failed in test setup: ${response.status} ${JSON.stringify(response.body)}`,
+    );
   }
   const cookies = ([] as string[]).concat(response.headers['set-cookie'] ?? []);
   const csrfCookie = cookies.find((cookie) => cookie.startsWith('csrf_token='));
