@@ -13,7 +13,14 @@ const fleet = [
   { make: 'Toyota', model: 'RAV4', category: 'SUV', price: '33500.00', quantity: 0, year: 2025 },
   { make: 'Honda', model: 'Civic', category: 'SEDAN', price: '24500.00', quantity: 7, year: 2023 },
   { make: 'Ford', model: 'F-150', category: 'TRUCK', price: '45500.00', quantity: 3, year: 2024 },
-  { make: 'Tesla', model: 'Model 3', category: 'SEDAN', price: '42990.00', quantity: 2, year: 2025 },
+  {
+    make: 'Tesla',
+    model: 'Model 3',
+    category: 'SEDAN',
+    price: '42990.00',
+    quantity: 2,
+    year: 2025,
+  },
   { make: 'BMW', model: 'X5', category: 'SUV', price: '65900.00', quantity: 1, year: 2025 },
 ] as const;
 
@@ -175,9 +182,7 @@ describe('GET /api/vehicles/search', () => {
 
   it('treats user input as literal text, not SQL or LIKE wildcards', async () => {
     for (const q of ["' OR 1=1 --", '%', '_', 'Camry%']) {
-      const response = await request(app).get(
-        `/api/vehicles/search?q=${encodeURIComponent(q)}`,
-      );
+      const response = await request(app).get(`/api/vehicles/search?q=${encodeURIComponent(q)}`);
 
       expect(response.status).toBe(200);
       expect(response.body.data).toEqual([]);

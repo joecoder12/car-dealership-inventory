@@ -60,3 +60,61 @@ export const createVehicleSchema = z.object({
 });
 
 export type CreateVehicleInput = z.output<typeof createVehicleSchema>;
+
+export const SORT_OPTIONS = ['newest', 'price_asc', 'price_desc', 'make_asc', 'year_desc'] as const;
+export type SortOption = (typeof SORT_OPTIONS)[number];
+export const MAX_PAGE_SIZE = 50;
+
+/** Blank query parameters (e.g. `?make=` from an empty form field) mean "no filter". */
+const withoutBlankParams = (query: unknown) =>
+  typeof query === 'object' && query !== null
+    ? Object.fromEntries(Object.entries(query).filter(([, value]) => value !== ''))
+    : query;
+
+const paginationShape = {
+  page: z.coerce.number('page must be a number').int().min(1, 'page must be 1 or more').default(1),
+  pageSize: z.coerce
+    .number('pageSize must be a number')
+    .int()
+    .min(1, 'pageSize must be 1 or more')
+    .max(MAX_PAGE_SIZE, `pageSize must be at most ${MAX_PAGE_SIZE}`)
+    .default(12),
+  sort: z.enum(SORT_OPTIONS, `sort must be one of: ${SORT_OPTIONS.join(', ')}`).default('newest'),
+};
+
+const priceBound = (name: string) =>
+  z.coerce
+    .number(`${name} must be a number`)
+    .min(0, `${name} cannot be negative`)
+    .max(MAX_PRICE, `${name} is too large`)
+    .optional();
+
+export const listVehiclesQuerySchema = z.preprocess(withoutBlankParams, z.object(paginationShape));
+
+export const searchVehiclesQuerySchema = z.preprocess(
+  withoutBlankParams,
+  z
+    .object({
+      ...paginationShape,
+      q: z.string().trim().max(100, 'Search text is too long').optional(),
+      make: z.string().trim().max(60).optional(),
+      model: z.string().trim().max(80).optional(),
+      category: z
+        .enum(VehicleCategory, 'category must be one of the supported categories')
+        .optional(),
+      minPrice: priceBound('minPrice'),
+      maxPrice: priceBound('maxPrice'),
+      inStock: z
+        .enum(['true', 'false'], 'inStock must be true or false')
+        .transform((value) => value === 'true')
+        .optional(),
+    })
+    .refine(
+      ({ minPrice, maxPrice }) =>
+        minPrice === undefined || maxPrice === undefined || minPrice <= maxPrice,
+      { path: ['maxPrice'], message: 'maxPrice must be greater than or equal to minPrice' },
+    ),
+);
+
+export type VehicleSearchCriteria = z.output<typeof searchVehiclesQuerySchema>;
+export type ListVehiclesQuery = z.output<typeof listVehiclesQuerySchema>;
