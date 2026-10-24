@@ -71,7 +71,7 @@ export function VehicleDetailPage() {
       </Link>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[1.35fr_1fr] lg:gap-12">
-        <div className="overflow-hidden rounded-3xl shadow-card ring-1 ring-ink-900/5">
+        <div className="self-start overflow-hidden rounded-3xl shadow-card ring-1 ring-ink-900/5">
           <VehicleVisual vehicle={vehicle} className="aspect-[16/10] w-full" />
         </div>
 

@@ -44,18 +44,21 @@ export function VehicleCard({ vehicle, action }: { vehicle: Vehicle; action?: Re
   const headingId = useId();
   const href = `/vehicles/${vehicle.id}`;
 
+  // "Stretched link": the title link's ::after covers the whole card, so the
+  // entire card is clickable while there is still only one link per card for
+  // assistive tech. The action (Purchase) sits above it with z-10.
   return (
     <article
       aria-labelledby={headingId}
-      className="group flex animate-fade-up flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-ink-900/5 transition duration-200 hover:-translate-y-0.5 hover:shadow-lift"
+      className="group relative flex animate-fade-up flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-ink-900/5 transition duration-200 hover:-translate-y-0.5 hover:shadow-lift has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ember-500"
     >
-      <Link to={href} tabIndex={-1} aria-hidden="true" className="relative block aspect-[16/10]">
+      <div className="relative aspect-[16/10]">
         <VehicleVisual vehicle={vehicle} className="h-full w-full" />
         <span className="absolute top-3 left-3 rounded-full bg-white/85 px-2.5 py-1 text-xs font-semibold text-ink-700 ring-1 ring-ink-900/5 backdrop-blur">
           {categoryLabel(vehicle.category)}
         </span>
         <StockBadge quantity={vehicle.quantity} className="absolute top-3 right-3" />
-      </Link>
+      </div>
 
       <div className="flex flex-1 flex-col p-5">
         <p
@@ -65,7 +68,10 @@ export function VehicleCard({ vehicle, action }: { vehicle: Vehicle; action?: Re
           {vehicle.make}
         </p>
         <h3 id={headingId} className="mt-1 text-lg leading-snug font-semibold text-ink-950">
-          <Link to={href} className="rounded hover:text-ember-700">
+          <Link
+            to={href}
+            className="outline-none group-hover:text-ember-700 after:absolute after:inset-0 after:content-['']"
+          >
             {/* The make is shown above as an eyebrow; repeat it for assistive tech.
                 The separating space must sit outside the span or it is trimmed. */}
             <span className="sr-only">{vehicle.make}</span> {vehicle.model}
@@ -82,7 +88,7 @@ export function VehicleCard({ vehicle, action }: { vehicle: Vehicle; action?: Re
               {formatPrice(vehicle.price)}
             </p>
           </div>
-          {action}
+          {action && <div className="relative z-10">{action}</div>}
         </div>
       </div>
     </article>

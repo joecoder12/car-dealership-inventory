@@ -50,7 +50,6 @@ export function AuthShell({
                 opacity={0.25 + step * 0.12}
               />
             ))}
-            <path d="M0 250 H400" stroke="white" strokeOpacity="0.08" />
           </svg>
           <div className="relative flex h-full flex-col">
             <p className="text-xs font-semibold tracking-[0.2em] text-ember-300 uppercase">
