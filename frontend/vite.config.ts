@@ -17,6 +17,12 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), tailwindcss()],
     server: { port: 5180, strictPort: true, proxy },
     preview: { port: 5181, strictPort: true, proxy },
+    build: {
+      // After route-level code splitting the entry chunk is ~573 kB (172 kB
+      // gzipped): React, React DOM, React Router and TanStack Query, which every
+      // page needs. The limit sits just above that so real growth still warns.
+      chunkSizeWarningLimit: 600,
+    },
     test: {
       environment: 'jsdom',
       setupFiles: ['src/test/setup.ts'],

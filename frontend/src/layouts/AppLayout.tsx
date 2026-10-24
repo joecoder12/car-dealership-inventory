@@ -1,6 +1,8 @@
+import { Suspense } from 'react';
 import { Link, NavLink, Outlet } from 'react-router';
 import { AccountMenu } from '../components/AccountMenu';
 import { Wordmark } from '../components/Logo';
+import { PageSpinner } from '../components/ui/Spinner';
 import { buttonClasses } from '../components/ui/styles';
 import { useAuth } from '../hooks/useAuth';
 
@@ -75,7 +77,9 @@ export function AppLayout() {
       </header>
 
       <main id="main" className="flex-1">
-        <Outlet />
+        <Suspense fallback={<PageSpinner />}>
+          <Outlet />
+        </Suspense>
       </main>
 
       <footer className="border-t border-ink-200/70 bg-paper">
