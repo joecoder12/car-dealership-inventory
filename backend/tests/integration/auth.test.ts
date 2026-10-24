@@ -259,4 +259,21 @@ describe('auth rate limiting', () => {
     expect(blocked.status).toBe(429);
     expect(blocked.body.error.code).toBe('RATE_LIMITED');
   });
+
+  it('limits each client separately behind a trusted reverse proxy', async () => {
+    const proxiedApp = buildTestApp(db, {
+      config: createTestConfig({ AUTH_RATE_LIMIT_MAX: '2', TRUST_PROXY: '1' }),
+    });
+    const attemptFrom = (ip: string) =>
+      request(proxiedApp)
+        .post('/api/auth/login')
+        .set('X-Forwarded-For', ip)
+        .send({ email: 'nobody@example.com', password: 'Whatever1' });
+
+    await attemptFrom('203.0.113.1');
+    await attemptFrom('203.0.113.1');
+
+    expect((await attemptFrom('203.0.113.1')).status).toBe(429);
+    expect((await attemptFrom('203.0.113.2')).status).toBe(401);
+  });
 });

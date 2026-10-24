@@ -18,6 +18,7 @@ describe('loadConfig', () => {
       jwt: { secret: validEnv.JWT_SECRET, expiresInMinutes: 60 },
       corsOrigins: ['http://localhost:5180'],
       authRateLimitMax: 20,
+      trustProxyHops: 0,
     });
   });
 
@@ -36,6 +37,11 @@ describe('loadConfig', () => {
     expect(config.jwt.expiresInMinutes).toBe(15);
     expect(config.corsOrigins).toEqual(['https://cars.example.com', 'https://admin.example.com']);
     expect(config.authRateLimitMax).toBe(5);
+  });
+
+  it('reads how many reverse-proxy hops to trust for client IPs', () => {
+    expect(loadConfig({ ...validEnv, TRUST_PROXY: '1' }).trustProxyHops).toBe(1);
+    expect(() => loadConfig({ ...validEnv, TRUST_PROXY: '-1' })).toThrow(/TRUST_PROXY/);
   });
 
   it('rejects a missing JWT secret', () => {
