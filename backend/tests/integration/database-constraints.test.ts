@@ -75,7 +75,7 @@ describe('database constraints', () => {
           vehicleModel: vehicle.model,
           quantity: 0,
           unitPrice: vehicle.price,
-          totalPrice: '0',
+          totalPrice: vehicle.price,
         },
       }),
     ).rejects.toThrow(/purchases_quantity_positive/);
