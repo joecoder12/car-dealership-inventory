@@ -1,0 +1,96 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/sora';
+
+/*
+ * Northlane Motors design tokens.
+ * ink   — cool graphite neutrals for text, chrome and dark surfaces
+ * ember — a burnished copper accent used sparingly for calls to action
+ * paper — warm off-white page background
+ * Contrast: ember-600 on white is 4.8:1 and ink-500 on paper 5.3:1 (WCAG AA).
+ */
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Sora Variable', 'Inter Variable', ui-sans-serif, sans-serif;
+
+  --color-paper: #f7f5f0;
+
+  --color-ink-50: #f5f6f8;
+  --color-ink-100: #e9ecf1;
+  --color-ink-200: #cfd5df;
+  --color-ink-300: #a9b3c3;
+  --color-ink-400: #7c889c;
+  --color-ink-500: #5b6679;
+  --color-ink-600: #454e5f;
+  --color-ink-700: #333a48;
+  --color-ink-800: #222833;
+  --color-ink-900: #151a22;
+  --color-ink-950: #0b0e13;
+
+  --color-ember-50: #fff6ef;
+  --color-ember-100: #feead9;
+  --color-ember-200: #fcd0ad;
+  --color-ember-300: #f9ad77;
+  --color-ember-400: #f5813f;
+  --color-ember-500: #ee6118;
+  --color-ember-600: #c9470c;
+  --color-ember-700: #a3370d;
+  --color-ember-800: #842e12;
+  --color-ember-900: #6c2812;
+
+  --shadow-card: 0 1px 2px rgb(11 14 19 / 0.04), 0 8px 24px -12px rgb(11 14 19 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(11 14 19 / 0.05), 0 22px 40px -18px rgb(11 14 19 / 0.28);
+
+  --animate-fade-up: fade-up 0.35s ease-out both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes shimmer {
+    from {
+      background-position: -400px 0;
+    }
+    to {
+      background-position: 400px 0;
+    }
+  }
+}
+
+@layer base {
+  html {
+    @apply bg-paper text-ink-900 antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply min-h-dvh font-sans;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ember-500;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
