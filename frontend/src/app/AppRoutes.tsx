@@ -4,6 +4,7 @@ import { CataloguePage } from '../pages/CataloguePage';
 import { LoginPage } from '../pages/LoginPage';
 import { RegisterPage } from '../pages/RegisterPage';
 import { NotFoundPage } from '../pages/StatusPages';
+import { VehicleDetailPage } from '../pages/VehicleDetailPage';
 import { GuestOnly, RequireAdmin } from './guards';
 
 function AdminPlaceholder() {
@@ -15,6 +16,7 @@ export function AppRoutes() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<CataloguePage />} />
+        <Route path="vehicles/:id" element={<VehicleDetailPage />} />
         <Route element={<GuestOnly />}>
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />

@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react';
 import { CatalogueFilters, SearchBox } from '../components/catalogue/CatalogueFilters';
 import { Pagination } from '../components/catalogue/Pagination';
+import { PurchaseButton } from '../components/purchase/PurchaseButton';
 import { Button } from '../components/ui/Button';
 import { VehicleCard, VehicleCardSkeleton } from '../components/vehicles/VehicleCard';
 import { useVehicleFilters } from '../hooks/useVehicleFilters';
 import { useVehicleList } from '../hooks/useVehicles';
-import type { Vehicle } from '../types/models';
 
 function EmptyState({ title, body, action }: { title: string; body: string; action?: ReactNode }) {
   return (
@@ -29,12 +29,7 @@ function EmptyState({ title, body, action }: { title: string; body: string; acti
   );
 }
 
-export function CataloguePage({
-  renderAction,
-}: {
-  /** Lets the purchase feature add a call to action to each card. */
-  renderAction?: (vehicle: Vehicle) => ReactNode;
-}) {
+export function CataloguePage() {
   const { filters, update, clear, hasActiveFilters } = useVehicleFilters();
   const { data, isPending, isError, error, refetch, isFetching, isPlaceholderData } =
     useVehicleList(filters);
@@ -97,7 +92,7 @@ export function CataloguePage({
           {data.data.map((vehicle) => (
             <li key={vehicle.id} className="flex">
               <div className="flex w-full flex-col [&>article]:flex-1">
-                <VehicleCard vehicle={vehicle} action={renderAction?.(vehicle)} />
+                <VehicleCard vehicle={vehicle} action={<PurchaseButton vehicle={vehicle} />} />
               </div>
             </li>
           ))}
