@@ -1,6 +1,7 @@
 import type { Express } from 'express';
 import request from 'supertest';
 import type { Database } from '../../src/db/client.js';
+import type { Prisma } from '../../src/generated/prisma/client.js';
 import type { Role } from '../../src/generated/prisma/enums.js';
 import { hashPassword } from '../../src/modules/auth/password.js';
 
@@ -23,6 +24,22 @@ export async function createUser(
       email: overrides.email ?? `user-${crypto.randomUUID()}@example.com`,
       role: overrides.role ?? 'USER',
       passwordHash,
+    },
+  });
+}
+
+export async function createVehicle(
+  db: Database,
+  overrides: Partial<Prisma.VehicleUncheckedCreateInput> = {},
+) {
+  return db.vehicle.create({
+    data: {
+      make: 'Toyota',
+      model: 'Corolla',
+      category: 'SEDAN',
+      price: '21999.00',
+      quantity: 5,
+      ...overrides,
     },
   });
 }
