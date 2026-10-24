@@ -58,11 +58,14 @@ export function AppLayout() {
               <>
                 <Link
                   to="/login"
-                  className="rounded-lg px-3 py-2 text-sm font-medium text-ink-200 hover:text-white"
+                  className="rounded-lg px-2 py-2 text-sm font-medium whitespace-nowrap text-ink-200 hover:text-white sm:px-3"
                 >
                   Sign in
                 </Link>
-                <Link to="/register" className={buttonClasses('primary', 'sm')}>
+                <Link
+                  to="/register"
+                  className={`${buttonClasses('primary', 'sm')} whitespace-nowrap`}
+                >
                   Create account
                 </Link>
               </>

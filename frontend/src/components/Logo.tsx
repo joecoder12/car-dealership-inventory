@@ -19,7 +19,7 @@ export function Wordmark() {
     <span className="flex items-center gap-2.5">
       <LogoMark />
       <span className="font-display text-[1.05rem] leading-none font-semibold tracking-tight">
-        Northlane<span className="font-normal text-ink-300"> Motors</span>
+        Northlane<span className="hidden font-normal text-ink-300 sm:inline"> Motors</span>
       </span>
     </span>
   );

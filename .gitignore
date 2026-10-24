@@ -22,3 +22,6 @@ e2e/.auth/
 
 .DS_Store
 *.log
+
+# Local editor/agent configuration
+.claude/
