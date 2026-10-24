@@ -1,0 +1,19 @@
+[WebServer] Loaded Prisma config from prisma.config.ts.
+[WebServer] 
+[WebServer] Prisma schema loaded from prisma/schema.prisma.
+
+Running 11 tests using 1 worker
+
+  ✓   1 [chromium] › e2e/admin.spec.ts:13:1 › 7. a normal user cannot reach admin pages or admin API operations (1.4s)
+  ✓   2 [chromium] › e2e/admin.spec.ts:56:3 › 8–10. an admin manages a vehicle end to end › 8. adds a vehicle through the form (2.9s)
+  ✓   3 [chromium] › e2e/admin.spec.ts:82:3 › 8–10. an admin manages a vehicle end to end › 9a. updates the vehicle details (2.9s)
+  ✓   4 [chromium] › e2e/admin.spec.ts:96:3 › 8–10. an admin manages a vehicle end to end › 9b. restocks the vehicle (2.4s)
+  ✓   5 [chromium] › e2e/admin.spec.ts:109:3 › 8–10. an admin manages a vehicle end to end › 10. deletes the vehicle after confirming (2.3s)
+  ✓   6 [chromium] › e2e/auth.spec.ts:4:1 › 1. a visitor registers, signs out and signs back in (2.5s)
+  ✓   7 [chromium] › e2e/auth.spec.ts:20:1 › wrong credentials are rejected with a generic message (1.1s)
+  ✓   8 [chromium] › e2e/shopping.spec.ts:40:1 › 2. anyone can browse the live catalogue (198ms)
+  ✓   9 [chromium] › e2e/shopping.spec.ts:50:1 › 3. search narrows the catalogue to matching vehicles (1.1s)
+  ✓  10 [chromium] › e2e/shopping.spec.ts:60:1 › 4 + 5. a signed-in customer buys a vehicle and the stock goes down (2.4s)
+  ✓  11 [chromium] › e2e/shopping.spec.ts:81:1 › 6. a sold-out vehicle cannot be purchased, in the UI or via the API (2.0s)
+
+  11 passed (25.6s)
