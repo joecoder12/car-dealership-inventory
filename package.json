@@ -1,0 +1,42 @@
+{
+  "name": "car-dealership-inventory",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Car dealership inventory system: Express + PostgreSQL API and a React SPA, built test-first.",
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "setup:env": "node scripts/init-env.mjs",
+    "db:start": "sh scripts/db.sh start",
+    "db:stop": "sh scripts/db.sh stop",
+    "db:status": "sh scripts/db.sh status",
+    "db:migrate": "npm run db:migrate -w backend",
+    "db:seed": "npm run db:seed -w backend",
+    "admin:create": "npm run admin:create -w backend --",
+    "dev": "concurrently -n api,web -c blue,magenta \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "npm run typecheck -w backend && npm run typecheck -w frontend",
+    "test": "npm run test -w backend && npm run test -w frontend",
+    "test:coverage": "npm run test:coverage -w backend && npm run test:coverage -w frontend",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "concurrently": "^9.2.5",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.5.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.0"
+  }
+}
