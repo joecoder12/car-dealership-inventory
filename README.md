@@ -1,5 +1,9 @@
 # Northlane Motors — Car Dealership Inventory System
 
+[![CI](https://github.com/joecoder12/car-dealership-inventory/actions/workflows/ci.yml/badge.svg)](https://github.com/joecoder12/car-dealership-inventory/actions/workflows/ci.yml)
+
+**Repository:** <https://github.com/joecoder12/car-dealership-inventory>
+
 A full-stack inventory system for a car dealership, built test-first for the
 **Incubyte AI Kata (TDD)**. Customers browse, search and buy vehicles from a live
 catalogue; administrators add, edit, restock and remove vehicles. Stock levels
@@ -587,12 +591,13 @@ Every commit made with AI assistance carries
   see [docs/TEST_REPORT.md](docs/TEST_REPORT.md).
 - No secrets were printed or committed; local admin credentials live only in
   the untracked `.env`.
+- The GitHub Actions workflow passed on the first push to GitHub
+  ([run 40184006297](https://github.com/joecoder12/car-dealership-inventory/actions/runs/40184006297), Ubuntu, Node 22.23.3, PostgreSQL 17).
 
 ### Limitations of the AI-assisted process
 
 - The AI made mistakes that were caught and corrected in the open (see
   [Development process](#development-process)).
-- CI has not run on GitHub yet (no remote configured at the time of writing).
 
 ### Author's review
 
@@ -617,11 +622,11 @@ line, anything you changed by hand, and what you would do differently._
 - **Images** are https URLs or generated illustrations; there is no upload.
 - **Prices** are formatted in one currency (`VITE_CURRENCY`, default USD).
 - **Browsers:** E2E runs on Chromium only.
-- **Runtime versions:** developed and verified on Node 25.8; CI pins Node 22,
-  which was not run locally.
+- **Runtime versions:** verified on Node 25.8 (macOS, development) and Node
+  22.23 (Ubuntu, CI) only.
 - **Docker Compose** is provided but was not exercised (Docker was not installed
   on the development machine; `scripts/db.sh` was used instead).
-- **Not deployed;** CI not yet executed on GitHub.
+- **Not deployed.**
 
 ## Deployment notes
 

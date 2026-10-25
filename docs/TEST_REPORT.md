@@ -21,6 +21,15 @@ Each test suite exited with code 0 and reported no unhandled errors. (One
 earlier run did report unhandled rejections from a test stub; that was fixed
 in `e192a63`, see the README's _Development process_.)
 
+## GitHub Actions (CI)
+
+The same gates ran on GitHub after the first push: [run 40184006297](https://github.com/joecoder12/car-dealership-inventory/actions/runs/40184006297)
+(2026-10-25 10:15 UTC, `ubuntu-latest`, Node 22.23.3 from `.nvmrc`,
+`postgres:17-alpine` service). All 18 steps succeeded: formatting, lint,
+type-check, **174 / 174** backend and **62 / 62** frontend tests with coverage,
+production builds and **11 / 11** Playwright tests. This also confirms the
+project installs and passes from a clean checkout on Linux and Node 22.
+
 ## Coverage
 
 |                                                                            | Statements | Branches | Functions | Lines       |
@@ -120,7 +129,5 @@ Playwright report: `npx playwright show-report`.
 
 ## Not yet verified
 
-- The GitHub Actions workflow has not run on GitHub (no remote configured).
 - `docker-compose.yml` has not been exercised (Docker is not installed on the
   development machine); the local cluster script was used instead.
-- Node 22 (the CI version) was not run locally.
