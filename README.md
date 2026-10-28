@@ -636,7 +636,9 @@ line, anything you changed by hand, and what you would do differently._
 The live demo runs on Vercel with a Neon PostgreSQL database
 ([`vercel.json`](vercel.json), [`api/index.js`](api/index.js)): the React build
 is served as static files and the Express app runs as one serverless function on
-the same origin. Migrations run during each build against the unpooled Neon URL.
+the same origin. Migrations run during each build against the unpooled Neon URL,
+followed by `db:seed --if-empty`, which loads the demo catalogue only into a
+database that has no vehicles yet.
 
 A minimal self-hosted production setup:
 

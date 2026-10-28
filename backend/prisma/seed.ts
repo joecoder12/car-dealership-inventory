@@ -1,5 +1,8 @@
 // Loads the demo catalogue into the database named by DATABASE_URL.
 // Repeatable: existing vehicles are left untouched. Creates no user accounts.
+// With --if-empty it only seeds a database that has no vehicles yet, so a
+// deployment can run it on every build without re-adding vehicles an admin
+// has since deleted.
 import { config as loadEnv } from 'dotenv';
 import { fileURLToPath } from 'node:url';
 import { seedCatalogue } from '../src/bootstrap/seed-catalogue.js';
@@ -15,8 +18,12 @@ if (!databaseUrl) {
 
 const db = createDatabaseClient(databaseUrl);
 try {
-  const { created, skipped } = await seedCatalogue(db);
-  console.log(`Seed complete: ${created} vehicle(s) created, ${skipped} already present.`);
+  if (process.argv.includes('--if-empty') && (await db.vehicle.count()) > 0) {
+    console.log('Seed skipped: the catalogue already has vehicles.');
+  } else {
+    const { created, skipped } = await seedCatalogue(db);
+    console.log(`Seed complete: ${created} vehicle(s) created, ${skipped} already present.`);
+  }
 } finally {
   await db.$disconnect();
 }
