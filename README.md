@@ -4,6 +4,8 @@
 
 **Repository:** <https://github.com/joecoder12/car-dealership-inventory>
 
+**Live demo:** <https://car-dealership-inventory-sepia.vercel.app>
+
 A full-stack inventory system for a car dealership, built test-first for the
 **Incubyte AI Kata (TDD)**. Customers browse, search and buy vehicles from a live
 catalogue; administrators add, edit, restock and remove vehicles. Stock levels
@@ -626,11 +628,17 @@ line, anything you changed by hand, and what you would do differently._
   22.23 (Ubuntu, CI) only.
 - **Docker Compose** is provided but was not exercised (Docker was not installed
   on the development machine; `scripts/db.sh` was used instead).
-- **Not deployed.**
+- **Serverless rate limiting.** On Vercel each function instance keeps its own
+  in-memory limiter, so the auth limit is per instance rather than global.
 
 ## Deployment notes
 
-The app is deployment-ready but not deployed. A minimal production setup:
+The live demo runs on Vercel with a Neon PostgreSQL database
+([`vercel.json`](vercel.json), [`api/index.js`](api/index.js)): the React build
+is served as static files and the Express app runs as one serverless function on
+the same origin. Migrations run during each build against the unpooled Neon URL.
+
+A minimal self-hosted production setup:
 
 1. Provision PostgreSQL and set `DATABASE_URL`, a strong `JWT_SECRET`,
    `NODE_ENV=production`, `CORS_ORIGINS` and `TRUST_PROXY` (usually `1`).
